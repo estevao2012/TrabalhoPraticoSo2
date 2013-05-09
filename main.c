@@ -25,7 +25,7 @@ int main() {
 
     // mostra_personagens(fila);
     
-    exit(0);
+    // exit(0);
     
     pthread_t tid[NUM_PERSONAGENS];
 
