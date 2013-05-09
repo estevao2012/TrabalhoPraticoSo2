@@ -7,10 +7,12 @@ typedef struct monitor
 	personagem *personagem[10];
 }monitor;
 
-// void incluir_personagem(monitor *fila,personagem *p);
+void inicializa_monitor(monitor *fila);
 
-// void mostra_personagens(monitor *fila);
+void incluir_personagem(monitor *fila,personagem *p);
 
-// void inicializa_monitor(monitor *fila);
+void mostra_ultimo(monitor *fila);
+
+void mostra_personagens(monitor *fila);
 
 #include "monitor.c"

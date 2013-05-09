@@ -15,12 +15,10 @@ void mostra_ultimo(monitor *fila){
 
 
 void mostra_personagens(monitor *fila){
-	personagem *p;
-	
+	personagem *p; 
 	int i; 
 	for(i=0;i<fila->tamanho;i++){
 		p = fila->personagem[i];
 		printf("%s\n", p->nome ); 
-	} 
-	// mostra_ultimo(fila);
+	}  
 }
