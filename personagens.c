@@ -26,3 +26,7 @@ void minha_acao(personagem p,int acao){
             break;
     }
 }
+
+void seta_prioridade(personagem *p , int prioridade){
+  p->prioridade = prioridade;
+}

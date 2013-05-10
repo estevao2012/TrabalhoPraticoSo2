@@ -1,6 +1,9 @@
 #include <pthread.h>
 #include <stdlib.h>
-#include <stdio.h> 
+#include <stdio.h>
+#include <signal.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "funcoes.h"
 
@@ -14,23 +17,20 @@ int main() {
     personagem *p[NUM_PERSONAGENS];
     char *nome_personagens[NUM_PERSONAGENS] = { "Raj" ,"Sheldon" , "Amy" , "Leonard" ,  "Penny"  , "Howard" ,  "Bernadete"}; //Variavel só para setar os nomes
 
-    monitor *fila;
-    fila = malloc(sizeof(monitor*));
-    inicializa_monitor(fila);
 
+    fila = malloc(sizeof(monitor*));
+    inicializa_monitor(fila);   
 
     for(i=0;i<NUM_PERSONAGENS;i++){
         p[i] = inicializa_personagem(i,nome_personagens[i]);
+        seta_prioridade(p[i],i);
     }  
     
     pthread_t tid[NUM_PERSONAGENS];
 
     // Cria o mutex
     pthread_mutex_init(&mutex, NULL);
-
-    // Cria a variavel de condicao
-    // pthread_cond_init(&cond, NULL);
-
+ 
     //Cria as threads
     for(i=1; i<NUM_PERSONAGENS; i++){
         pthread_create(&(tid[i]), NULL, usar_forno, (void *)(p[i]));
@@ -40,12 +40,12 @@ int main() {
     for(i=1; i<NUM_PERSONAGENS; i++){
         pthread_join(tid[i], NULL);
     }
+    // printf("todos personagens\n");
+
+    // mostra_personagens(fila);
 
     // Destroi o mutex
     pthread_mutex_destroy(&mutex);
-
-    // Destroi a variavel condicional
-    // pthread_cond_destroy(&cond);
 
     pthread_exit((void *)NULL);
 }

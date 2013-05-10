@@ -5,7 +5,8 @@
 #include "monitor.h"
 
 pthread_mutex_t mutex;
-pthread_cond_t cond;
+
+monitor *fila;
 
 void *usar_forno(void *vargp);
 
