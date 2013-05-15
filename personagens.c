@@ -27,6 +27,6 @@ void minha_acao(personagem p,int acao){
     }
 }
 
-void seta_prioridade(personagem *p , int prioridade){
-  p->prioridade = prioridade;
+void seta_prioridade(personagem *Eu , personagem *Sobre){
+  Eu->TenhoPrioridadeSobre = Sobre;
 }

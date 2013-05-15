@@ -1,4 +1,4 @@
-all: compila executa
+all: compila_t executa
 
 compila:
 	gcc -c -g main.c funcoes.h monitor.h

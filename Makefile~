@@ -1,12 +1,16 @@
 all: compila executa
 
 compila:
-	gcc -c -g main.c -Wall
-	gcc main.c -o bashso 
+	gcc -c -g main.c funcoes.h monitor.h
+	gcc monitor.h funcoes.h main.c -o bbtmovw
+ 
+compila_t:
+	gcc -c -g main.c funcoes.h
+	gcc funcoes.h main.c -o bbtmovw -lpthread  
  
 executa:
-	./bashso
+	./bbtmovw
 
 valgrind:
 	@echo "Executando o valgrind"
-	valgrind ./bashso
+	valgrind ./bbtmovw
