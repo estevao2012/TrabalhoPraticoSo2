@@ -4,7 +4,7 @@
 #include "personagens.h"   
 
 pthread_mutex_t mutex; 
-pthread_cond_t cond;
+pthread_cond_t cond; 
 
 personagem *fila[7];
 int _fila_vazia = -1;

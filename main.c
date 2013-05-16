@@ -13,7 +13,7 @@
 int main() {
 
     //Variaveis
-    int i,id_amigo;
+    int i,num_threads;
     personagem *p[NUM_PERSONAGENS];
     //Variavel só para setar os nomes
     char *nome_personagens[NUM_PERSONAGENS] = { "Raj" ,"Sheldon" , "Amy" , "Howard" ,  "Bernadete" , "Leonard" ,  "Penny"  }; 
@@ -33,12 +33,13 @@ int main() {
     pthread_cond_init(&cond, NULL);
     
     //Cria as threads
-    for(i=1; i<NUM_PERSONAGENS; i++)
+    num_threads = 4;
+    for(i=1; i< num_threads; i++)
         pthread_create(&(tid[i]), NULL, usar_forno, (void *)(p[i]));
     
     
     // Espera que as threads terminem
-    for(i=1; i<NUM_PERSONAGENS; i++){
+    for(i=1; i< num_threads; i++){
         pthread_join(tid[i], NULL);
     }
 
