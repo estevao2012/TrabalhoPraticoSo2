@@ -30,7 +30,8 @@ int main() {
 
     // Cria o mutex
     pthread_mutex_init(&mutex, NULL);
-    pthread_cond_init(&cond, NULL);
+    pthread_cond_init(&forno, NULL);
+    pthread_mutex_init(&espera, NULL);
     
     //Cria as threads
     num_threads = 4;
@@ -46,7 +47,8 @@ int main() {
 
     // Destroi o mutex
     pthread_mutex_destroy(&mutex);
-    pthread_cond_destroy(&cond);
+    pthread_mutex_destroy(&espera);
+    pthread_cond_destroy(&forno);
 
     pthread_exit((void *)NULL);
 }

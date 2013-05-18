@@ -4,13 +4,14 @@
 #include "personagens.h"   
 
 pthread_mutex_t mutex; 
-pthread_cond_t cond; 
+pthread_mutex_t espera; 
+pthread_cond_t forno; 
 
 personagem *fila[7];
-int _fila_vazia = -1;
+int fila_vazia = 1;
 
 void *usar_forno(void *vargp);
 
-int fila_vazia(personagem **fila,int tamanho);
+int a_esta_fila_vazia(personagem **fila,int tamanho);
 
 #include "funcoes.c"
