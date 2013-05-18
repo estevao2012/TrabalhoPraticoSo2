@@ -34,7 +34,7 @@ int main() {
     pthread_mutex_init(&espera, NULL);
     
     //Cria as threads
-    num_threads = 4;
+    num_threads = 5;
     for(i=1; i< num_threads; i++)
         pthread_create(&(tid[i]), NULL, usar_forno, (void *)(p[i]));
     
