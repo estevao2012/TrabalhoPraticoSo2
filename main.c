@@ -13,7 +13,7 @@
 int main() {
 
     //Variaveis
-    int i,num_threads;
+    int i;
     personagem *p[NUM_PERSONAGENS];
     //Variavel só para setar os nomes
     char *nome_personagens[NUM_PERSONAGENS] = { "Raj" ,"Sheldon" , "Amy" , "Howard" ,  "Bernadete" , "Leonard" ,  "Penny"  }; 
@@ -34,7 +34,6 @@ int main() {
     pthread_mutex_init(&espera, NULL);
     
     //Cria as threads
-    num_threads = 5;
     for(i=1; i< num_threads; i++)
         pthread_create(&(tid[i]), NULL, usar_forno, (void *)(p[i]));
     
