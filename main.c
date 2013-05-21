@@ -30,8 +30,9 @@ int main() {
 
     // Cria o mutex
     pthread_mutex_init(&mutex, NULL);
-    pthread_cond_init(&forno, NULL);
-    pthread_mutex_init(&espera, NULL);
+    pthread_cond_init(&casais[0], NULL); 
+    pthread_cond_init(&casais[1], NULL); 
+    pthread_cond_init(&casais[2], NULL); 
     
     //Cria as threads
     for(i=1; i< num_threads; i++)
@@ -45,9 +46,10 @@ int main() {
 
 
     // Destroi o mutex
-    pthread_mutex_destroy(&mutex);
-    pthread_mutex_destroy(&espera);
-    pthread_cond_destroy(&forno);
+    pthread_mutex_destroy(&mutex); 
+    pthread_cond_destroy(&casais[0]);
+    pthread_cond_destroy(&casais[1]);
+    pthread_cond_destroy(&casais[2]);
 
     pthread_exit((void *)NULL);
 }
