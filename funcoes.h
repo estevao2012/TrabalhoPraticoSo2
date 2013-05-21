@@ -10,7 +10,7 @@ personagem *fila[7];
 personagem *usando;
 
 int fila_vazia = 1;
-int num_threads = 7;
+int num_threads = 5;
 
 void *usar_forno(void *vargp);
 

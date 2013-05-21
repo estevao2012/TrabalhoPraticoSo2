@@ -65,14 +65,19 @@ int libera(){
     
     
     if(fila[ homem->TemMaiorPrioridade->id ] != NULL || fila[ homem->TemMaiorPrioridade->namorado->id ] != NULL){
+        
         thread_correta = posicao_var_condicao( homem->TemMaiorPrioridade->id  );                    
         pthread_cond_signal(&casais[thread_correta]); 
         return 1;
-    }else if( (fila[ homem->id ] != NULL || fila[ homem->namorado->id ] != NULL) ){
-            thread_correta = posicao_var_condicao( homem->id );    
-            pthread_cond_signal(&casais[thread_correta]); 
-            return 1;
+
     }
+    // else if( (fila[ homem->id ] != NULL || fila[ homem->namorado->id ] != NULL) ){
+
+    //     thread_correta = posicao_var_condicao( homem->id );    
+    //     pthread_cond_signal(&casais[thread_correta]); 
+    //     return 1;
+
+    // }
 
     libera_o_que_sobra();
 
