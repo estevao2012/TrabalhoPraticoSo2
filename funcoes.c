@@ -56,7 +56,7 @@ int libera(){
     int i=1;
     int thread_correta;
     int namorada = 0;
-
+    int tem_mais_prioridade = 0;
     personagem *homem; 
     
     //Quer dizer que é a namorada
@@ -65,19 +65,22 @@ int libera(){
     
     
     if(fila[ homem->TemMaiorPrioridade->id ] != NULL || fila[ homem->TemMaiorPrioridade->namorado->id ] != NULL){
-        
-        thread_correta = posicao_var_condicao( homem->TemMaiorPrioridade->id  );                    
+        while(fila[ homem->TemMaiorPrioridade->id ] != NULL || fila[ homem->TemMaiorPrioridade->namorado->id ] != NULL){
+            homem = homem->TemMaiorPrioridade;
+            if(tem_mais_prioridade > 3) deadlock++;
+            tem_mais_prioridade++;
+        }
+
+        thread_correta = posicao_var_condicao( homem->id  );                    
+        pthread_cond_signal(&casais[thread_correta]); 
+        return 1;
+    }else if( (fila[ homem->id ] != NULL || fila[ homem->namorado->id ] != NULL) ){
+
+        thread_correta = posicao_var_condicao( homem->id );    
         pthread_cond_signal(&casais[thread_correta]); 
         return 1;
 
     }
-    // else if( (fila[ homem->id ] != NULL || fila[ homem->namorado->id ] != NULL) ){
-
-    //     thread_correta = posicao_var_condicao( homem->id );    
-    //     pthread_cond_signal(&casais[thread_correta]); 
-    //     return 1;
-
-    // }
 
     libera_o_que_sobra();
 
@@ -101,6 +104,22 @@ void esquenta_comida(personagem *p){
 
     libera();          
 
+} 
+int verifica_deadlock(){
+    if(deadlock >= 1) return 1;
+    else return 0;
+}
+
+void *quebra_o_galho_raj(void *vargp){
+    personagem *a = (personagem *) vargp; 
+    while(a_esta_fila_vazia(fila) == 0){
+        sleep(10);
+        if(verifica_deadlock() == 1){
+            printf("Quebra nosso galho raj\n");
+            deadlock = 0;
+            libera_o_que_sobra();
+        }
+    }
 }
 
 void *usar_forno(void *vargp)

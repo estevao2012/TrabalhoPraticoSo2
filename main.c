@@ -43,12 +43,23 @@ int main() {
     pthread_cond_init(&casais[2], NULL); 
     
     //Cria as threads
-    for(i=1; i< num_threads; i++)
-        pthread_create(&(tid[i]), NULL, usar_forno, (void *)(p[i]));
+    // for(i=3; i<num_threads; i++)
+        // pthread_create(&(tid[i]), NULL, usar_forno, (void *)(p[i]));
+
+    pthread_create(&(tid[0]), NULL, quebra_o_galho_raj, (void *)(p[0]));
+    pthread_create(&(tid[1]), NULL, usar_forno, (void *)(p[1]));
+    pthread_create(&(tid[4]), NULL, usar_forno, (void *)(p[4]));
+    pthread_create(&(tid[5]), NULL, usar_forno, (void *)(p[5]));
+    sleep(5);
+    pthread_create(&(tid[2]), NULL, usar_forno, (void *)(p[2]));
+    sleep(3);
+    pthread_create(&(tid[5]), NULL, usar_forno, (void *)(p[6]));
+    pthread_create(&(tid[3]), NULL, usar_forno, (void *)(p[3]));
+
     
     
     // Espera que as threads terminem
-    for(i=1; i< num_threads; i++){
+    for(i=0; i< num_threads; i++){
         pthread_join(tid[i], NULL);
     }
 
