@@ -39,6 +39,18 @@ int posicao_var_condicao(int id){
     return thread_correta;
 }
 
+void libera_o_que_sobra(){
+    int i,thread_correta;
+    while(a_esta_fila_vazia(fila) == 0){
+        if(fila[i] != NULL && fila[i] != usando){
+            thread_correta = thread_correta = posicao_var_condicao(i);                    
+            pthread_cond_signal(&casais[thread_correta]); 
+            break;
+        }
+        i++;
+    }
+}
+
 int libera(){
     
     int i=1;
@@ -47,35 +59,23 @@ int libera(){
 
     personagem *homem; 
     
-    thread_correta = posicao_var_condicao( usando->id );    
-
     //Quer dizer que é a namorada
-    if(fila[usando->id]->id % 2 == 0){
-        homem = usando->namorado;
-    }else{    
-        homem = usando;
-    }
+    if(usando->id % 2 == 0) homem = usando->namorado;
+    else homem = usando;
     
-    if(fila[ homem->TemMaiorPrioridade->id ] != NULL){
+    
+    if(fila[ homem->TemMaiorPrioridade->id ] != NULL || fila[ homem->TemMaiorPrioridade->namorado->id ] != NULL){
         thread_correta = posicao_var_condicao( homem->TemMaiorPrioridade->id  );                    
         pthread_cond_signal(&casais[thread_correta]); 
         return 1;
-    }
-    
-    if(fila[ homem->id ] != NULL || fila[ homem->namorado->id ] != NULL){
-        pthread_cond_signal(&casais[thread_correta]); 
-        return 1;
-    }
-
-    while(a_esta_fila_vazia(fila) == 0){
-        
-        if(fila[i] != NULL && fila[i] != usando){
-            thread_correta = thread_correta = posicao_var_condicao(i);                    
+    }else if( (fila[ homem->id ] != NULL || fila[ homem->namorado->id ] != NULL) ){
+            thread_correta = posicao_var_condicao( homem->id );    
             pthread_cond_signal(&casais[thread_correta]); 
             return 1;
-        }
-        i++;
     }
+
+    libera_o_que_sobra();
+
     return 0;
 
 }
@@ -92,9 +92,10 @@ void esquenta_comida(personagem *p){
 
     fila_vazia++;
 
+    fila[p->id] = NULL;
+
     libera();          
 
-    fila[p->id] = NULL;
 }
 
 void *usar_forno(void *vargp)
