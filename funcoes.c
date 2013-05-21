@@ -72,18 +72,6 @@ int libera(){
         return 1;
     }
 
-
-    // if(fila[ usando->namorado->id] != NULL ){
-    //     pthread_cond_signal(&casais[thread_correta]); 
-    //     return 1;
-    // }else{
-    //     if(fila[ usando->TemMaiorPrioridade->id ] != NULL){
-    //         thread_correta = posicao_var_condicao( usando->TemMaiorPrioridade->id );                    
-    //         pthread_cond_signal(&casais[thread_correta]); 
-    //         return 1;
-    //     }
-    // }
-
     while(a_esta_fila_vazia(fila) == 0){
         
         if(fila[i] != NULL && fila[i] != usando){
