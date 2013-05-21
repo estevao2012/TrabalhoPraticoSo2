@@ -5,9 +5,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#define NUM_PERSONAGENS 7
+
 #include "funcoes.h"
 
-#define NUM_PERSONAGENS 7
 
 
 int main() {
@@ -18,13 +19,20 @@ int main() {
     //Variavel só para setar os nomes
     char *nome_personagens[NUM_PERSONAGENS] = { "Raj" ,"Sheldon" , "Amy" , "Howard" ,  "Bernadete" , "Leonard" ,  "Penny"  }; 
 
-    for(i=0;i<NUM_PERSONAGENS;i++) p[i] = inicializa_personagem(i,nome_personagens[i]); // Inicializa Os Personagens
+    for(i=0;i<NUM_PERSONAGENS;i++)
+        p[i] = inicializa_personagem(i,nome_personagens[i]); // Inicializa Os Personagens
 
-    for(i=1;i<NUM_PERSONAGENS;i++) //Determina as prioridades de cada personagem
-        if(i%2 == 1) seta_prioridade(p[i],p[(i+2)%6]);
+    
+    for(i=1;i<NUM_PERSONAGENS;i++)
+        if(i%2 == 1) seta_prioridade(p[i],p[(i+2)%6]); 
         else seta_prioridade(p[i],p[i]);
- 
-    for(i = 0; i < NUM_PERSONAGENS; i++) fila[i] = NULL; // Inicializa a fila de espera dos personagens
+
+    seta_namorado(p[1],p[2]);
+    seta_namorado(p[3],p[4]);
+    seta_namorado(p[5],p[6]);
+
+    for(i = 0; i < NUM_PERSONAGENS; i++) 
+        fila[i] = NULL; // Inicializa a fila de espera dos personagens
     
     pthread_t tid[NUM_PERSONAGENS];
 

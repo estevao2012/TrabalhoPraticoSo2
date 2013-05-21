@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "personagens.h"   
 
-pthread_mutex_t mutex;  
+pthread_mutex_t mutex;   
 pthread_cond_t casais[3]; 
 
 personagem *fila[7];

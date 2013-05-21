@@ -6,7 +6,8 @@
 struct personagens{
     int id;
     char *nome;
-    struct personagens *TenhoPrioridadeSobre;
+    struct personagens *TemMaiorPrioridade;
+    struct personagens *namorado;
 };
 typedef struct personagens personagem;
 
@@ -17,5 +18,7 @@ void quem_sou_eu(personagem p);
 void minha_acao(personagem p,int acao);
 
 void seta_prioridade(personagem *Eu , personagem *Sobre);
+
+void seta_namorado(personagem *homem , personagem *mulher);
 
 #include "personagens.c"
