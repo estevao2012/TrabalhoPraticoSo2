@@ -45,29 +45,24 @@ int libera(){
     int thread_correta;
     int namorada = 0;
 
-    personagem *namorado;
-    personagem *atual;
+    personagem *homem; 
     
     thread_correta = posicao_var_condicao( usando->id );    
 
     //Quer dizer que é a namorada
     if(fila[usando->id]->id % 2 == 0){
-        namorado = usando->namorado;
-        namorada++;
+        homem = usando->namorado;
     }else{    
-        namorado = usando;
+        homem = usando;
     }
     
-    if(fila[ namorado->TemMaiorPrioridade->id ] != NULL){
-        thread_correta = posicao_var_condicao( namorado->TemMaiorPrioridade->id  );                    
+    if(fila[ homem->TemMaiorPrioridade->id ] != NULL){
+        thread_correta = posicao_var_condicao( homem->TemMaiorPrioridade->id  );                    
         pthread_cond_signal(&casais[thread_correta]); 
         return 1;
     }
-    else if(namorada > 0 && fila[ (namorado->namorado->id ) ] != NULL){
-        pthread_cond_signal(&casais[thread_correta]); 
-        return 1;
-    }
-    else if(fila[ (namorado->namorado->id ) ] != NULL ){
+    
+    if(fila[ homem->id ] != NULL || fila[ homem->namorado->id ] != NULL){
         pthread_cond_signal(&casais[thread_correta]); 
         return 1;
     }
