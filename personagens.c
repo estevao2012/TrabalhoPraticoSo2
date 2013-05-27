@@ -3,6 +3,7 @@ personagem *inicializa_personagem(int id,char *nome){
   p = malloc(sizeof(personagem));
   p->id = id;
   p->nome = (char*) nome;
+  p->qntsVezesUsoOForno = 1;
   return p;
 }
 

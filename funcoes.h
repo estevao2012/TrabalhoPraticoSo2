@@ -9,12 +9,32 @@ pthread_cond_t casais[3];
 personagem *fila[7];
 personagem *usando;
 
-int fila_vazia = 1;
+int usando_forno = 1;
 int num_threads = 7;
 int deadlock = 0;
+int vezes_entra_fila = 1;
 
 void *usar_forno(void *vargp);
 
+void *quebra_o_galho_raj(void *vargp);
+
 int a_esta_fila_vazia(personagem **fila);
+
+void entra_na_fila(personagem *p);
+
+void mostra_fila();
+
+void espera_o_forno(personagem *p);
+
+int qual_casal_liberar(int id);
+
+int libera_o_que_sobra();
+
+void me_recola_na_fila(personagem *p);
+
+int libera();
+
+void esquenta_comida(personagem *p);
+
 
 #include "funcoes.c"

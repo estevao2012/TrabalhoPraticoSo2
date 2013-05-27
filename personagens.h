@@ -8,6 +8,7 @@ struct personagens{
     char *nome;
     struct personagens *TemMaiorPrioridade;
     struct personagens *namorado;
+    int qntsVezesUsoOForno;
 };
 typedef struct personagens personagem;
 

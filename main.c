@@ -11,10 +11,11 @@
 
 
 
-int main() {
+int main(int argc , char **argv) {
 
     //Variaveis
     int i;
+    pthread_t tid[NUM_PERSONAGENS];
     personagem *p[NUM_PERSONAGENS];
     //Variavel só para setar os nomes
     char *nome_personagens[NUM_PERSONAGENS] = { "Raj" ,"Sheldon" , "Amy" , "Howard" ,  "Bernadete" , "Leonard" ,  "Penny"  }; 
@@ -34,27 +35,29 @@ int main() {
     for(i = 0; i < NUM_PERSONAGENS; i++) 
         fila[i] = NULL; // Inicializa a fila de espera dos personagens
     
-    pthread_t tid[NUM_PERSONAGENS];
 
+    if(argv[1]) vezes_entra_fila = (int)atoi(argv[1]);
+    
     // Cria o mutex
     pthread_mutex_init(&mutex, NULL);
+    //Cria variaveis de condição
     pthread_cond_init(&casais[0], NULL); 
     pthread_cond_init(&casais[1], NULL); 
     pthread_cond_init(&casais[2], NULL); 
     
-    //Cria as threads
-    // for(i=3; i<num_threads; i++)
-        // pthread_create(&(tid[i]), NULL, usar_forno, (void *)(p[i]));
-
+    //Inicia o Raj
     pthread_create(&(tid[0]), NULL, quebra_o_galho_raj, (void *)(p[0]));
-    pthread_create(&(tid[1]), NULL, usar_forno, (void *)(p[1]));
-    pthread_create(&(tid[4]), NULL, usar_forno, (void *)(p[4]));
-    pthread_create(&(tid[5]), NULL, usar_forno, (void *)(p[5]));
-    sleep(5);
-    pthread_create(&(tid[2]), NULL, usar_forno, (void *)(p[2]));
-    sleep(3);
-    pthread_create(&(tid[5]), NULL, usar_forno, (void *)(p[6]));
-    pthread_create(&(tid[3]), NULL, usar_forno, (void *)(p[3]));
+
+    //Cria as threads
+    pthread_create(&(tid[6]), NULL, usar_forno, (void *)(p[6]));
+    for(i=1; i<num_threads-1; i++)
+        pthread_create(&(tid[i]), NULL, usar_forno, (void *)(p[i])); 
+        // pthread_create(&(tid[1]), NULL, usar_forno, (void *)(p[1]));
+        // pthread_create(&(tid[4]), NULL, usar_forno, (void *)(p[4]));
+        // pthread_create(&(tid[5]), NULL, usar_forno, (void *)(p[5]));
+        // pthread_create(&(tid[2]), NULL, usar_forno, (void *)(p[2]));
+        // pthread_create(&(tid[6]), NULL, usar_forno, (void *)(p[6]));
+    // pthread_create(&(tid[3]), NULL, usar_forno, (void *)(p[3]));
 
     
     
@@ -63,9 +66,9 @@ int main() {
         pthread_join(tid[i], NULL);
     }
 
-
     // Destroi o mutex
     pthread_mutex_destroy(&mutex); 
+    //Destroi as variaveis de condição
     pthread_cond_destroy(&casais[0]);
     pthread_cond_destroy(&casais[1]);
     pthread_cond_destroy(&casais[2]);

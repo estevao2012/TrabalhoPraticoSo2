@@ -2,8 +2,8 @@
 int a_esta_fila_vazia(personagem **fila){
     int i;
     for(i=0;i<num_threads;i++)
-        if(fila[i] != NULL) return 0;
-    return 1;
+        if(fila[i] != NULL) return i;
+    return 0;
 }
 
 void entra_na_fila(personagem *p){
@@ -18,8 +18,9 @@ void mostra_fila(){
 }
 
 void espera_o_forno(personagem *p){
+
     pthread_mutex_lock(&mutex);
-        printf("%s esta esperando o forno\n", p->nome );
+        printf("%s quer usar o forno\n", p->nome );
 
         if(p->id == 1 || p->id == 2)
             pthread_cond_wait(&casais[0], &mutex);  
@@ -31,93 +32,131 @@ void espera_o_forno(personagem *p){
     pthread_mutex_unlock(&mutex);
 }
 
-int posicao_var_condicao(int id){
-    int thread_correta = 0;
-    thread_correta = id/3;
-    if(id==5) thread_correta++;
+int qual_casal_liberar(int id){
+    
+    int casal_id = 0;
+    
+    if(id == 1 || id == 2)
+        casal_id = 0;
+    else if(id == 3 || id == 4 )
+        casal_id = 1;
+    else if(id == 5 || id == 6)
+        casal_id = 2;
+    
 
-    return thread_correta;
+    return casal_id;
 }
 
-void libera_o_que_sobra(){
-    int i,thread_correta;
-    while(a_esta_fila_vazia(fila) == 0){
+int libera_o_que_sobrou(){
+    
+    int i,casal_id;
+
+    while(a_esta_fila_vazia(fila) > 0){
+
         if(fila[i] != NULL && fila[i] != usando){
-            thread_correta = thread_correta = posicao_var_condicao(i);                    
-            pthread_cond_signal(&casais[thread_correta]); 
-            break;
+            casal_id = qual_casal_liberar(i);                    
+            pthread_cond_signal(&casais[casal_id]); 
+            return 1;
         }
+
         i++;
     }
+    return 0;
 }
 
-int libera(){
+void me_recola_na_fila(personagem *p){
+    sleep(3);
+    entra_na_fila(p);     
+    p->qntsVezesUsoOForno++; 
+}
+
+int libera(personagem *atual){
     
-    int i=1;
-    int thread_correta;
-    int namorada = 0;
+    int casal_id;
+    int tem_gente = 0;
+
     int tem_mais_prioridade = 0;
     personagem *homem; 
     
-    //Quer dizer que é a namorada
-    if(usando->id % 2 == 0) homem = usando->namorado;
-    else homem = usando;
     
+    if(atual->id % 2 == 0) homem = atual->namorado; //Quer dizer que é a namorada
+    else homem = atual;
     
     if(fila[ homem->TemMaiorPrioridade->id ] != NULL || fila[ homem->TemMaiorPrioridade->namorado->id ] != NULL){
-        while(fila[ homem->TemMaiorPrioridade->id ] != NULL || fila[ homem->TemMaiorPrioridade->namorado->id ] != NULL){
+        
+        while( fila[ homem->TemMaiorPrioridade->id ] != NULL || fila[ homem->TemMaiorPrioridade->namorado->id ] != NULL){
+            
             homem = homem->TemMaiorPrioridade;
-            if(tem_mais_prioridade > 3) deadlock++;
+            
+            if( tem_mais_prioridade > 6 ) deadlock=1;
             tem_mais_prioridade++;
+
         }
+        tem_gente = 1;
 
-        thread_correta = posicao_var_condicao( homem->id  );                    
-        pthread_cond_signal(&casais[thread_correta]); 
-        return 1;
-    }else if( (fila[ homem->id ] != NULL || fila[ homem->namorado->id ] != NULL) ){
-
-        thread_correta = posicao_var_condicao( homem->id );    
-        pthread_cond_signal(&casais[thread_correta]); 
-        return 1;
-
+    }else if( fila[ homem->id ] != NULL || fila[ homem->namorado->id ] != NULL ){
+        tem_gente = 1;
     }
 
-    libera_o_que_sobra();
+    if(tem_gente == 1){
+        casal_id = qual_casal_liberar( homem->id  );                    
+        pthread_cond_signal(&casais[casal_id]); 
+        return 1;
+    }else {
+        libera_o_que_sobrou();
+        return 1;
+    }
 
     return 0;
 
 }
 
-void esquenta_comida(personagem *p){
-    
-    fila_vazia--;
-
-    printf("%s ,ESTA USANDO O FORNO\n",p->nome);  
-    sleep(1); 
-    printf("%s Finalizo\n",p->nome);
-
-    usando = p;
-
-    fila_vazia++;
+void fui_comer(personagem *p){
 
     fila[p->id] = NULL;
 
-    libera();          
+    printf("%s foi comer\n", p->nome );
+
+    libera(p); 
+
+
+    sleep(3);
+
+    if(vezes_entra_fila > p->qntsVezesUsoOForno){
+        me_recola_na_fila(p);   
+    }
+}
+
+void esquenta_comida(personagem *p){
+    
+    usando_forno--;
+
+    printf("%s ,ESTA USANDO O FORNO\n",p->nome);  
+
+    usando = p;
+
+    sleep(1);  
+
+    usando_forno++;
+
+    fui_comer(p);
 
 } 
 int verifica_deadlock(){
-    if(deadlock >= 1) return 1;
+    if(deadlock == 1) return 1;
     else return 0;
 }
 
 void *quebra_o_galho_raj(void *vargp){
     personagem *a = (personagem *) vargp; 
-    while(a_esta_fila_vazia(fila) == 0){
-        sleep(10);
+    while(a_esta_fila_vazia(fila) > 0){
+        
+        sleep(5);
+
         if(verifica_deadlock() == 1){
             printf("Quebra nosso galho raj\n");
             deadlock = 0;
-            libera_o_que_sobra();
+            libera_o_que_sobrou();
         }
     }
 }
@@ -129,16 +168,13 @@ void *usar_forno(void *vargp)
 
     entra_na_fila(a);
 
-    while(a_esta_fila_vazia(fila) == 0){
-        
-        if(fila_vazia == 1 && fila[a->id] != NULL){
+    while(a_esta_fila_vazia(fila) > 0){      
+        if(usando_forno == 1 && fila[ a->id ] != NULL)
             esquenta_comida(a);
-        }
-        else if(fila[a->id] != NULL){
-            espera_o_forno(a);
-        }  
+        else if(fila[a->id] != NULL)
+            espera_o_forno(a);      
     }
     
-
+    printf("%s foi embora\n", a->nome );
     pthread_exit((void *)NULL);
 }
