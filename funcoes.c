@@ -1,7 +1,7 @@
 
 int a_esta_fila_vazia(personagem **fila){
     int i;
-    for(i=0;i<num_threads;i++)
+    for(i=1;i<num_threads;i++)
         if(fila[i] != NULL) return i;
     return 0;
 }
@@ -58,13 +58,20 @@ int get_casal_id(int id){
 int libera_o_que_sobrou(int menos_casal_id){
     
     int i = 1,casal_id;
-
+    int tst;
 
     while(a_esta_fila_vazia(fila) > 0){
         
         casal_id = get_casal_id(i);                    
         
         if(fila[i] != NULL && fila[i] != usando && menos_casal_id != casal_id){    
+            pthread_cond_signal(&casais[casal_id]); 
+            return 1;
+        }
+
+        if(i > 7){
+            tst = a_esta_fila_vazia(fila);
+            casal_id = get_casal_id(tst);                        
             pthread_cond_signal(&casais[casal_id]); 
             return 1;
         }
@@ -85,12 +92,11 @@ int testa_inanicao(personagem *p){
 
     vezes_por_casal[casal_id] = tmp_qnt_casal;
 
-    if(vezes_por_casal[casal_id] >= 3){ 
+    if(vezes_por_casal[casal_id] > 2){ 
         if(libera_o_que_sobrou(casal_id) == 1) {
            zera_uso_forno_casais();
            return 1;
         }
-
     }
     
     return 0;
