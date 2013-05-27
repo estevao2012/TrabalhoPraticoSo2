@@ -1,5 +1,5 @@
 
-int a_esta_fila_vazia(personagem **fila){
+int a_esta_fila_vazia(){
     int i;
     for(i=1;i<num_threads;i++)
         if(fila[i] != NULL) return i;
@@ -16,13 +16,6 @@ void zera_uso_forno_casais(){
 
 void entra_na_fila(personagem *p){
     fila[p->id] = p;
-}
-
-void mostra_fila(){
-    int i;
-    for(i=1;i<num_threads;i++)
-        if(fila[i] != NULL)
-            printf("%s Esta na fila \n", fila[i]->nome );
 }
 
 void espera_o_forno(personagem *p){
@@ -60,7 +53,7 @@ int libera_o_que_sobrou(int menos_casal_id){
     int i = 1,casal_id;
     int tst;
 
-    while(a_esta_fila_vazia(fila) > 0){
+    while(a_esta_fila_vazia() > 0){
         
         casal_id = get_casal_id(i);                    
         
@@ -70,7 +63,7 @@ int libera_o_que_sobrou(int menos_casal_id){
         }
 
         if(i > 7){
-            tst = a_esta_fila_vazia(fila);
+            tst = a_esta_fila_vazia();
             casal_id = get_casal_id(tst);                        
             pthread_cond_signal(&casais[casal_id]); 
             return 1;
@@ -186,7 +179,7 @@ int verifica_deadlock(){
 
 void *quebra_o_galho_raj(void *vargp){
     personagem *a = (personagem *) vargp; 
-    while(a_esta_fila_vazia(fila) > 0){
+    while(a_esta_fila_vazia() > 0){
         
         sleep(5);
 
@@ -205,7 +198,7 @@ void *usar_forno(void *vargp)
 
     entra_na_fila(a);
 
-    while(a_esta_fila_vazia(fila) > 0){      
+    while(a_esta_fila_vazia() > 0){      
         if(usando_forno == 1 && fila[ a->id ] != NULL)
             esquenta_comida(a);
         else if(fila[a->id] != NULL)
