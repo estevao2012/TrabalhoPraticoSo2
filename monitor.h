@@ -39,4 +39,4 @@ int libera();
 void esquenta_comida(personagem *p);
 
 
-#include "funcoes.c"
+#include "monitor.c"

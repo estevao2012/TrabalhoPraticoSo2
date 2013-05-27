@@ -7,7 +7,7 @@
 
 #define NUM_PERSONAGENS 7
 
-#include "funcoes.h"
+#include "monitor.h"
 
 
 

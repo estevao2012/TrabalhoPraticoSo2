@@ -1,12 +1,12 @@
 all: compila_t executa
 
 compila:
-	gcc -c -g main.c funcoes.h monitor.h
-	gcc monitor.h funcoes.h main.c -o bbtmovw
+	gcc -c -g main.c monitor.h
+	gcc monitor.h main.c -o bbtmovw
  
 compila_t:
-	gcc -c -g main.c funcoes.h
-	gcc funcoes.h main.c -o bbtmovw -lpthread  
+	gcc -c -g main.c monitor.h
+	gcc monitor.h main.c -o bbtmovw -lpthread  
  
 executa:
 	./bbtmovw
