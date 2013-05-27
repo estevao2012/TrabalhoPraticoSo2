@@ -14,6 +14,8 @@ int num_threads = 7;
 int deadlock = 0;
 int vezes_entra_fila = 1;
 
+int vezes_por_casal[3];
+
 void *usar_forno(void *vargp);
 
 void *quebra_o_galho_raj(void *vargp);
@@ -26,7 +28,7 @@ void mostra_fila();
 
 void espera_o_forno(personagem *p);
 
-int qual_casal_liberar(int id);
+int get_casal_id(int id);
 
 int libera_o_que_sobra();
 

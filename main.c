@@ -38,6 +38,8 @@ int main(int argc , char **argv) {
 
     if(argv[1]) vezes_entra_fila = (int)atoi(argv[1]);
     
+    zera_uso_forno_casais();
+
     // Cria o mutex
     pthread_mutex_init(&mutex, NULL);
     //Cria variaveis de condição
@@ -49,22 +51,27 @@ int main(int argc , char **argv) {
     pthread_create(&(tid[0]), NULL, quebra_o_galho_raj, (void *)(p[0]));
 
     //Cria as threads
-    pthread_create(&(tid[6]), NULL, usar_forno, (void *)(p[6]));
-    for(i=1; i<num_threads-1; i++)
-        pthread_create(&(tid[i]), NULL, usar_forno, (void *)(p[i])); 
+    // pthread_create(&(tid[6]), NULL, usar_forno, (void *)(p[6]));
+    // for(i=1; i<num_threads-1; i++)
+        // pthread_create(&(tid[i]), NULL, usar_forno, (void *)(p[i])); 
         // pthread_create(&(tid[1]), NULL, usar_forno, (void *)(p[1]));
-        // pthread_create(&(tid[4]), NULL, usar_forno, (void *)(p[4]));
-        // pthread_create(&(tid[5]), NULL, usar_forno, (void *)(p[5]));
+        
+        pthread_create(&(tid[5]), NULL, usar_forno, (void *)(p[5]));
         // pthread_create(&(tid[2]), NULL, usar_forno, (void *)(p[2]));
-        // pthread_create(&(tid[6]), NULL, usar_forno, (void *)(p[6]));
-    // pthread_create(&(tid[3]), NULL, usar_forno, (void *)(p[3]));
-
+        pthread_create(&(tid[6]), NULL, usar_forno, (void *)(p[6]));
+        pthread_create(&(tid[3]), NULL, usar_forno, (void *)(p[3]));
+        pthread_create(&(tid[4]), NULL, usar_forno, (void *)(p[4]));
     
     
     // Espera que as threads terminem
-    for(i=0; i< num_threads; i++){
-        pthread_join(tid[i], NULL);
-    }
+    // for(i=0; i < num_threads; i++){
+    //     pthread_join(tid[i], NULL);
+    // }
+    pthread_join(tid[0], NULL);
+    pthread_join(tid[3], NULL);
+    pthread_join(tid[4], NULL);
+    pthread_join(tid[5], NULL);
+    pthread_join(tid[6], NULL);
 
     // Destroi o mutex
     pthread_mutex_destroy(&mutex); 

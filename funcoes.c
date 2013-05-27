@@ -6,6 +6,14 @@ int a_esta_fila_vazia(personagem **fila){
     return 0;
 }
 
+void zera_uso_forno_casais(){
+
+    vezes_por_casal[0] = 0;
+    vezes_por_casal[1] = 0;
+    vezes_por_casal[2] = 0;
+
+}
+
 void entra_na_fila(personagem *p){
     fila[p->id] = p;
 }
@@ -32,7 +40,7 @@ void espera_o_forno(personagem *p){
     pthread_mutex_unlock(&mutex);
 }
 
-int qual_casal_liberar(int id){
+int get_casal_id(int id){
     
     int casal_id = 0;
     
@@ -47,14 +55,16 @@ int qual_casal_liberar(int id){
     return casal_id;
 }
 
-int libera_o_que_sobrou(){
+int libera_o_que_sobrou(int menos_casal_id){
     
-    int i,casal_id;
+    int i = 1,casal_id;
+
 
     while(a_esta_fila_vazia(fila) > 0){
-
-        if(fila[i] != NULL && fila[i] != usando){
-            casal_id = qual_casal_liberar(i);                    
+        
+        casal_id = get_casal_id(i);                    
+        
+        if(fila[i] != NULL && fila[i] != usando && menos_casal_id != casal_id){    
             pthread_cond_signal(&casais[casal_id]); 
             return 1;
         }
@@ -62,10 +72,33 @@ int libera_o_que_sobrou(){
         i++;
     }
     return 0;
+} 
+
+int testa_inanicao(personagem *p){
+    
+    int tmp_qnt_casal,casal_id;
+
+    casal_id = get_casal_id(p->id);
+    tmp_qnt_casal = vezes_por_casal[casal_id]+1;
+    
+    zera_uso_forno_casais();
+
+    vezes_por_casal[casal_id] = tmp_qnt_casal;
+
+    if(vezes_por_casal[casal_id] >= 3){ 
+        if(libera_o_que_sobrou(casal_id) == 1) {
+           zera_uso_forno_casais();
+           return 1;
+        }
+
+    }
+    
+    return 0;
+
 }
 
 void me_recola_na_fila(personagem *p){
-    sleep(3);
+    sleep(1);
     entra_na_fila(p);     
     p->qntsVezesUsoOForno++; 
 }
@@ -78,35 +111,36 @@ int libera(personagem *atual){
     int tem_mais_prioridade = 0;
     personagem *homem; 
     
-    
     if(atual->id % 2 == 0) homem = atual->namorado; //Quer dizer que é a namorada
     else homem = atual;
+
+    if(testa_inanicao(atual) == 0){
     
-    if(fila[ homem->TemMaiorPrioridade->id ] != NULL || fila[ homem->TemMaiorPrioridade->namorado->id ] != NULL){
-        
-        while( fila[ homem->TemMaiorPrioridade->id ] != NULL || fila[ homem->TemMaiorPrioridade->namorado->id ] != NULL){
+        if(fila[ homem->TemMaiorPrioridade->id ] != NULL || fila[ homem->TemMaiorPrioridade->namorado->id ] != NULL){
             
-            homem = homem->TemMaiorPrioridade;
-            
-            if( tem_mais_prioridade > 6 ) deadlock=1;
-            tem_mais_prioridade++;
+            while( fila[ homem->TemMaiorPrioridade->id ] != NULL || fila[ homem->TemMaiorPrioridade->namorado->id ] != NULL){
+                
+                homem = homem->TemMaiorPrioridade;
+                
+                if( tem_mais_prioridade > 6 ) deadlock=1;
+                tem_mais_prioridade++;
 
+            }
+            tem_gente = 1;
+
+        }else if( fila[ homem->id ] != NULL || fila[ homem->namorado->id ] != NULL ){
+            tem_gente = 1;
         }
-        tem_gente = 1;
 
-    }else if( fila[ homem->id ] != NULL || fila[ homem->namorado->id ] != NULL ){
-        tem_gente = 1;
+        if(tem_gente == 1){
+            casal_id = get_casal_id( homem->id  );                    
+            pthread_cond_signal(&casais[casal_id]); 
+            return 1;
+        }else {
+            libera_o_que_sobrou(-1);
+            return 1;
+        }
     }
-
-    if(tem_gente == 1){
-        casal_id = qual_casal_liberar( homem->id  );                    
-        pthread_cond_signal(&casais[casal_id]); 
-        return 1;
-    }else {
-        libera_o_que_sobrou();
-        return 1;
-    }
-
     return 0;
 
 }
@@ -117,10 +151,7 @@ void fui_comer(personagem *p){
 
     printf("%s foi comer\n", p->nome );
 
-    libera(p); 
-
-
-    sleep(3);
+    libera(p);  
 
     if(vezes_entra_fila > p->qntsVezesUsoOForno){
         me_recola_na_fila(p);   
@@ -156,7 +187,7 @@ void *quebra_o_galho_raj(void *vargp){
         if(verifica_deadlock() == 1){
             printf("Quebra nosso galho raj\n");
             deadlock = 0;
-            libera_o_que_sobrou();
+            libera_o_que_sobrou(-1);
         }
     }
 }
